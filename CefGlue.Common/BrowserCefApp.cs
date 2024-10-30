@@ -19,6 +19,9 @@ namespace Xilium.CefGlue.Common
 
         protected override void OnBeforeCommandLineProcessing(string processType, CefCommandLine commandLine)
         {
+            commandLine.AppendSwitch("disable-gpu", "1");
+            commandLine.AppendSwitch("disable-gpu-compositing", "1");
+
             if (string.IsNullOrEmpty(processType))
             {
                 if (CefRuntime.Platform == CefRuntimePlatform.Linux)
@@ -27,8 +30,6 @@ namespace Xilium.CefGlue.Common
                 }
                 if (CefRuntimeLoader.IsOSREnabled)
                 {
-                    commandLine.AppendSwitch("disable-gpu", "1");
-                    commandLine.AppendSwitch("disable-gpu-compositing", "1");
                     commandLine.AppendSwitch("enable-begin-frame-scheduling", "1");
                     commandLine.AppendSwitch("disable-smooth-scrolling", "1");
                 }
