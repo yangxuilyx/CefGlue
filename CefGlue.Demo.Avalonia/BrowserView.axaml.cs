@@ -25,12 +25,19 @@ namespace Xilium.CefGlue.Demo.Avalonia
             var browserWrapper = this.FindControl<Decorator>("browserWrapper");
 
             browser = new AvaloniaCefBrowser();
-            browser.Address = "https://www.google.com";
+            browser.Address = "https://dev-his.ysmhis.com/his-system-api/middle-web/emr/home";
             browser.RegisterJavascriptObject(new BindingTestClass(), "boundBeforeLoadObject");
             browser.LoadStart += OnBrowserLoadStart;
             browser.TitleChanged += OnBrowserTitleChanged;
             browser.LifeSpanHandler = new BrowserLifeSpanHandler();
+            browser.GotFocus += Browser_GotFocus;
             browserWrapper.Child = browser;
+        }
+
+        private void Browser_GotFocus(object sender, GotFocusEventArgs e)
+        {
+            InputMethod.SetIsInputMethodEnabled(this, true);
+               base.OnGotFocus(e);
         }
 
         static Task<object> AsyncCallNativeMethod(Func<object> nativeMethod)
