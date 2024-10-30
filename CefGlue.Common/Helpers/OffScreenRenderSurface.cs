@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO.MemoryMappedFiles;
 using System.Threading.Tasks;
 
@@ -9,7 +9,7 @@ namespace Xilium.CefGlue.Common.Helpers
     /// </summary>
     internal abstract class OffScreenRenderSurface : IDisposable
     {
-        private const int DefaultDpi = 96;
+        protected const int DefaultDpi = 96;
 
         private int _width;
         private int _height;
