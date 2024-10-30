@@ -23,7 +23,6 @@ namespace Xilium.CefGlue.BrowserProcess
                 }
 
                 CefRuntime.Load();
-                CefRuntime.EnableHighDpiSupport();
 
                 var customSchemesArg = GetArgumentValue(args, CommandLineArgs.CustomScheme);
                 var customSchemes = CustomScheme.FromCommandLineValue(customSchemesArg);

@@ -77,15 +77,18 @@
         {
             if (other == null) return false;
 
-            return cef_request_context_t.is_same(_self, other.ToNative()) != 0;
+            return cef_request_context_t.is_same(GetSelf(), other.ToNative()) != 0;
         }
+
+        private cef_request_context_t* GetSelf() =>
+             (cef_request_context_t*)_self;
 
         /// <summary>
         /// Returns true if this object is sharing the same storage as |that| object.
         /// </summary>
         public bool IsSharingWith(CefRequestContext other)
         {
-            return cef_request_context_t.is_sharing_with(_self, other.ToNative()) != 0;
+            return cef_request_context_t.is_sharing_with(GetSelf(), other.ToNative()) != 0;
         }
 
         /// <summary>
@@ -97,7 +100,7 @@
         {
             get
             {
-                return cef_request_context_t.is_global(_self) != 0;
+                return cef_request_context_t.is_global(GetSelf()) != 0;
             }
         }
 
@@ -107,7 +110,7 @@
         public CefRequestContextHandler GetHandler()
         {
             return CefRequestContextHandler.FromNativeOrNull(
-                cef_request_context_t.get_handler(_self)
+                cef_request_context_t.get_handler(GetSelf())
                 );
         }
 
@@ -119,7 +122,7 @@
         {
             get
             {
-                var n_result = cef_request_context_t.get_cache_path(_self);
+                var n_result = cef_request_context_t.get_cache_path(GetSelf());
                 return cef_string_userfree.ToString(n_result);
             }
         }
@@ -134,7 +137,7 @@
             var n_callback = callback != null ? callback.ToNative() : null;
 
             return CefCookieManager.FromNativeOrNull(
-                cef_request_context_t.get_cookie_manager(_self, n_callback)
+                cef_request_context_t.get_cookie_manager(GetSelf(), n_callback)
                 );
         }
 
@@ -162,7 +165,7 @@
                 var n_schemeName = new cef_string_t(schemeName_str, schemeName.Length);
                 var n_domainName = new cef_string_t(domainName_str, domainName != null ? domainName.Length : 0);
 
-                return cef_request_context_t.register_scheme_handler_factory(_self, &n_schemeName, &n_domainName, factory.ToNative()) != 0;
+                return cef_request_context_t.register_scheme_handler_factory(GetSelf(), &n_schemeName, &n_domainName, factory.ToNative()) != 0;
             }
         }
 
@@ -172,7 +175,7 @@
         /// </summary>
         public bool ClearSchemeHandlerFactories()
         {
-            return cef_request_context_t.clear_scheme_handler_factories(_self) != 0;
+            return cef_request_context_t.clear_scheme_handler_factories(GetSelf()) != 0;
         }
 
         /// <summary>
@@ -268,7 +271,7 @@
         public void ClearCertificateExceptions(CefCompletionCallback callback)
         {
             var n_callback = callback != null ? callback.ToNative() : null;
-            cef_request_context_t.clear_certificate_exceptions(_self, n_callback);
+            cef_request_context_t.clear_certificate_exceptions(GetSelf(), n_callback);
         }
 
         /// <summary>
@@ -279,7 +282,7 @@
         public void ClearHttpAuthCredentials(CefCompletionCallback callback)
         {
             var n_callback = callback != null ? callback.ToNative() : null;
-            cef_request_context_t.clear_http_auth_credentials(_self, n_callback);
+            cef_request_context_t.clear_http_auth_credentials(GetSelf(), n_callback);
         }
 
         /// <summary>
@@ -291,7 +294,7 @@
         public void CloseAllConnections(CefCompletionCallback callback)
         {
             var n_callback = callback != null ? callback.ToNative() : null;
-            cef_request_context_t.close_all_connections(_self, n_callback);
+            cef_request_context_t.close_all_connections(GetSelf(), n_callback);
         }
 
         /// <summary>
@@ -307,7 +310,7 @@
             {
                 var n_origin = new cef_string_t(origin_str, origin != null ? origin.Length : 0);
                 var n_callback = callback.ToNative();
-                cef_request_context_t.resolve_host(_self, &n_origin, n_callback);
+                cef_request_context_t.resolve_host(GetSelf(), &n_origin, n_callback);
             }
         }
 
@@ -353,12 +356,12 @@
         /// </summary>
         public void LoadExtension(string rootDirectory, CefDictionaryValue manifest, CefExtensionHandler handler)
         {
-            fixed(char* rootDirectory_str = rootDirectory)
+            fixed (char* rootDirectory_str = rootDirectory)
             {
                 var n_rootDirectory = new cef_string_t(rootDirectory_str, rootDirectory != null ? rootDirectory.Length : 0);
                 var n_manifest = manifest != null ? manifest.ToNative() : null;
                 var n_handler = handler != null ? handler.ToNative() : null;
-                cef_request_context_t.load_extension(_self, &n_rootDirectory, n_manifest, n_handler);
+                cef_request_context_t.load_extension(GetSelf(), &n_rootDirectory, n_manifest, n_handler);
             }
         }
 
@@ -370,10 +373,10 @@
         /// </summary>
         public bool DidLoadExtension(string extensionId)
         {
-            fixed(char* extensionId_str = extensionId)
+            fixed (char* extensionId_str = extensionId)
             {
                 var n_extensionId = new cef_string_t(extensionId_str, extensionId != null ? extensionId.Length : 0);
-                return cef_request_context_t.did_load_extension(_self, &n_extensionId) != 0;
+                return cef_request_context_t.did_load_extension(GetSelf(), &n_extensionId) != 0;
             }
         }
 
@@ -388,7 +391,7 @@
             fixed (char* extensionId_str = extensionId)
             {
                 var n_extensionId = new cef_string_t(extensionId_str, extensionId != null ? extensionId.Length : 0);
-                return cef_request_context_t.has_extension(_self, &n_extensionId) != 0;
+                return cef_request_context_t.has_extension(GetSelf(), &n_extensionId) != 0;
             }
         }
 
@@ -402,7 +405,7 @@
         {
             var n_extensionIds = libcef.string_list_alloc();
 
-            var result = cef_request_context_t.get_extensions(_self, n_extensionIds) != 0;
+            var result = cef_request_context_t.get_extensions(GetSelf(), n_extensionIds) != 0;
             if (result)
             {
                 extensionIds = cef_string_list.ToArray(n_extensionIds);
@@ -426,7 +429,7 @@
             fixed (char* extensionId_str = extensionId)
             {
                 var n_extensionId = new cef_string_t(extensionId_str, extensionId != null ? extensionId.Length : 0);
-                var n_result = cef_request_context_t.get_extension(_self, &n_extensionId);
+                var n_result = cef_request_context_t.get_extension(GetSelf(), &n_extensionId);
                 return CefExtension.FromNativeOrNull(n_result);
             }
         }
@@ -439,7 +442,7 @@
         public CefMediaRouter GetMediaRouter(CefCompletionCallback? callback)
         {
             var nCallback = callback != null ? callback.ToNative() : null;
-            var nResult = cef_request_context_t.get_media_router(_self, nCallback);
+            var nResult = cef_request_context_t.get_media_router(GetSelf(), nCallback);
             return CefMediaRouter.FromNative(nResult);
         }
     }
