@@ -1,10 +1,10 @@
 ﻿namespace Xilium.CefGlue
 {
     using System;
-    using System.IO;
-    using System.Linq;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Runtime.InteropServices;
+    using System.Text;
     using Xilium.CefGlue.Interop;
 
     public static unsafe class CefRuntime
@@ -22,23 +22,45 @@
         #region Platform Detection
         private static CefRuntimePlatform DetectPlatform()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return CefRuntimePlatform.Windows;
-            }
-            
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
+            var platformId = Environment.OSVersion.Platform;
+
+            if (platformId == PlatformID.MacOSX)
                 return CefRuntimePlatform.MacOS;
-            }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return CefRuntimePlatform.Linux;
-            }
+            int p = (int)platformId;
+            if ((p == 4) || (p == 128))
+                return IsRunningOnMac() ? CefRuntimePlatform.MacOS : CefRuntimePlatform.Linux;
 
-            throw new PlatformNotSupportedException();
+            return CefRuntimePlatform.Windows;
         }
+
+        //From Managed.Windows.Forms/XplatUI
+        private static bool IsRunningOnMac()
+        {
+            IntPtr buf = IntPtr.Zero;
+            try
+            {
+                buf = Marshal.AllocHGlobal(8192);
+                // This is a hacktastic way of getting sysname from uname ()
+                if (uname(buf) == 0)
+                {
+                    string os = Marshal.PtrToStringAnsi(buf);
+                    if (os == "Darwin")
+                        return true;
+                }
+            }
+            catch { }
+            finally
+            {
+                if (buf != IntPtr.Zero)
+                    Marshal.FreeHGlobal(buf);
+            }
+
+            return false;
+        }
+
+        [DllImport("libc")]
+        private static extern int uname(IntPtr buf);
 
         public static CefRuntimePlatform Platform
         {
@@ -111,19 +133,6 @@
 
         private static void CheckVersionByApiHash()
         {
-            // We need to load libCEF.so before getting API Hash on Linux.
-            if (Platform == CefRuntimePlatform.Linux) 
-            {
-                // find all the libcef.so files inside the application folder and its subfolders
-                var libCefFile = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, libcef.DllName + ".so", SearchOption.AllDirectories).FirstOrDefault();
-
-                // if found, load the first one.
-                if (libCefFile != null)
-                {
-                    NativeLibrary.TryLoad(libCefFile, out _);
-                }
-            }
-            
             // get CEF_API_HASH_PLATFORM
             string actual;
             try
@@ -135,14 +144,10 @@
             {
                 throw new NotSupportedException("cef_api_hash call is not supported.", ex);
             }
-            catch (DllNotFoundException dllEx)
-            {
-                throw new NotSupportedException($"Can't find CEF in \"{AppDomain.CurrentDomain.BaseDirectory}\"", dllEx);
-            }
             if (string.IsNullOrEmpty(actual)) throw new NotSupportedException();
 
             string expected;
-            switch (Platform)
+            switch (CefRuntime.Platform)
             {
                 case CefRuntimePlatform.Windows: expected = libcef.CEF_API_HASH_PLATFORM_WIN; break;
                 case CefRuntimePlatform.MacOS: expected = libcef.CEF_API_HASH_PLATFORM_MACOS; break;
@@ -246,17 +251,12 @@
         /// This function should be called on the main application thread to shut down
         /// the CEF browser process before the application exits.
         /// </summary>
-        /// <param name="skipGC">If set to <see langword="false"/> perform GC
-        /// and wait for pending finalizers.</param>
-        public static void Shutdown(bool skipGC = false)
+        public static void Shutdown()
         {
             if (!_initialized) return;
 
-            if (!skipGC)
-            {
-                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-                GC.WaitForPendingFinalizers();
-            }
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+            GC.WaitForPendingFinalizers();
 
             libcef.shutdown();
         }
@@ -302,15 +302,6 @@
         public static void QuitMessageLoop()
         {
             libcef.quit_message_loop();
-        }
-
-        /// <summary>
-        /// Set to true before calling Windows APIs like TrackPopupMenu that enter a
-        /// modal message loop. Set to false after exiting the modal message loop.
-        /// </summary>
-        public static void SetOSModalLoop(bool osModalLoop)
-        {
-            libcef.set_osmodal_loop(osModalLoop ? 1 : 0);
         }
 
         #endregion
@@ -746,7 +737,6 @@
                 var n_result = libcef.parse_jsonand_return_error(&n_value, options, &n_error_msg);
 
                 var result = CefValue.FromNativeOrNull(n_result);
-                // TODO: This probably error, see ResolveUrl case.
                 errorMessage = cef_string_userfree.ToString((cef_string_userfree*)&n_error_msg);
                 return result;
             }
@@ -762,38 +752,6 @@
             if (value == null) throw new ArgumentNullException("value");
             var n_result = libcef.write_json(value.ToNative(), options);
             return cef_string_userfree.ToString(n_result);
-        }
-
-        /// <summary>
-        /// Combines specified |base_url| and |relative_url| into |resolved_url|.
-        /// Returns false if one of the URLs is empty or invalid.
-        /// </summary>
-        public static bool ResolveUrl(string baseUrl,
-            string relativeUrl,
-            // [NotNullWhen(true)]
-            out string? resolvedUrl)
-        {
-            fixed (char* baseUrl_str = baseUrl)
-            fixed (char* relativeUrl_str = relativeUrl)
-            {
-                var n_baseUrl = new cef_string_t(baseUrl_str, baseUrl != null ? baseUrl.Length : 0);
-                var n_relativeUrl = new cef_string_t(relativeUrl_str, relativeUrl != null ? relativeUrl.Length : 0);
-
-                cef_string_t n_resolvedUrl = default;
-                var result = libcef.resolve_url(&n_baseUrl, &n_relativeUrl, &n_resolvedUrl) != 0;
-
-                if (result)
-                {
-                    resolvedUrl = cef_string_t.ToString(&n_resolvedUrl);
-                }
-                else
-                {
-                    resolvedUrl = null;
-                }
-
-                libcef.string_clear(&n_resolvedUrl);
-                return result;
-            }
         }
 
         #endregion
@@ -1090,5 +1048,15 @@
         {
             if (!_loaded) Load();
         }
+
+        #region linux
+
+        /////
+        //// Return the singleton X11 display shared with Chromium. The display is not
+        //// thread-safe and must only be accessed on the browser process UI thread.
+        /////
+        //CEF_EXPORT XDisplay* cef_get_xdisplay();
+
+        #endregion
     }
 }

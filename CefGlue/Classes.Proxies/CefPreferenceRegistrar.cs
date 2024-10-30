@@ -11,11 +11,6 @@
     /// </summary>
     public sealed unsafe partial class CefPreferenceRegistrar
     {
-        internal void ReleaseObject()
-        {
-            _self = null;
-        }
-
         /// <summary>
         /// Register a preference with the specified |name| and |default_value|. To
         /// avoid conflicts with built-in preferences the |name| value should contain

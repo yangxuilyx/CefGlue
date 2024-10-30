@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using Xilium.CefGlue.Interop;
 
@@ -25,10 +24,6 @@
     /// </summary>
     public sealed unsafe partial class CefRequestContext
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private cef_request_context_t* GetSelf()
-            => (cef_request_context_t*)_self;
-
         /// <summary>
         /// Returns the global context object.
         /// </summary>
@@ -84,6 +79,9 @@
 
             return cef_request_context_t.is_same(GetSelf(), other.ToNative()) != 0;
         }
+
+        private cef_request_context_t* GetSelf() =>
+             (cef_request_context_t*)_self;
 
         /// <summary>
         /// Returns true if this object is sharing the same storage as |that| object.
@@ -178,6 +176,88 @@
         public bool ClearSchemeHandlerFactories()
         {
             return cef_request_context_t.clear_scheme_handler_factories(GetSelf()) != 0;
+        }
+
+        /// <summary>
+        /// Returns true if a preference with the specified |name| exists. This method
+        /// must be called on the browser process UI thread.
+        /// </summary>
+        public bool HasPreference(string name)
+        {
+            fixed (char* name_str = name)
+            {
+                var n_name = new cef_string_t(name_str, name != null ? name.Length : 0);
+                return cef_request_context_t.has_preference(_self, &n_name) != 0;
+            }
+        }
+
+        /// <summary>
+        /// Returns the value for the preference with the specified |name|. Returns
+        /// NULL if the preference does not exist. The returned object contains a copy
+        /// of the underlying preference value and modifications to the returned
+        /// object will not modify the underlying preference value. This method must
+        /// be called on the browser process UI thread.
+        /// </summary>
+        public CefValue? GetPreference(string name)
+        {
+            fixed (char* name_str = name)
+            {
+                var n_name = new cef_string_t(name_str, name != null ? name.Length : 0);
+                var n_value = cef_request_context_t.get_preference(_self, &n_name);
+                return CefValue.FromNativeOrNull(n_value);
+            }
+        }
+
+        /// <summary>
+        /// Returns all preferences as a dictionary. If |include_defaults| is true
+        /// then preferences currently at their default value will be included. The
+        /// returned object contains a copy of the underlying preference values and
+        /// modifications to the returned object will not modify the underlying
+        /// preference values. This method must be called on the browser process UI
+        /// thread.
+        /// </summary>
+        public CefDictionaryValue GetAllPreferences(bool includeDefaults)
+        {
+            var n_result = cef_request_context_t.get_all_preferences(_self, includeDefaults ? 1 : 0);
+            return CefDictionaryValue.FromNative(n_result);
+        }
+
+        /// <summary>
+        /// Returns true if the preference with the specified |name| can be modified
+        /// using SetPreference. As one example preferences set via the command-line
+        /// usually cannot be modified. This method must be called on the browser
+        /// process UI thread.
+        /// </summary>
+        public bool CanSetPreference(string name)
+        {
+            fixed (char* name_str = name)
+            {
+                var n_name = new cef_string_t(name_str, name != null ? name.Length : 0);
+                return cef_request_context_t.can_set_preference(_self, &n_name) != 0;
+            }
+        }
+
+        /// <summary>
+        /// Set the |value| associated with preference |name|. Returns true if the
+        /// value is set successfully and false otherwise. If |value| is NULL the
+        /// preference will be restored to its default value. If setting the
+        /// preference fails then |error| will be populated with a detailed
+        /// description of the problem. This method must be called on the browser
+        /// process UI thread.
+        /// </summary>
+        public bool SetPreference(string name, CefValue? value, out string error)
+        {
+            fixed (char* name_str = name)
+            {
+                var n_name = new cef_string_t(name_str, name != null ? name.Length : 0);
+                var n_value = value != null ? value.ToNative() : null;
+                cef_string_t n_error;
+
+                var n_result = cef_request_context_t.set_preference(_self, &n_name, n_value, &n_error);
+
+                error = cef_string_t.ToString(&n_error);
+                return n_result != 0;
+            }
         }
 
         /// <summary>
@@ -276,7 +356,7 @@
         /// </summary>
         public void LoadExtension(string rootDirectory, CefDictionaryValue manifest, CefExtensionHandler handler)
         {
-            fixed(char* rootDirectory_str = rootDirectory)
+            fixed (char* rootDirectory_str = rootDirectory)
             {
                 var n_rootDirectory = new cef_string_t(rootDirectory_str, rootDirectory != null ? rootDirectory.Length : 0);
                 var n_manifest = manifest != null ? manifest.ToNative() : null;
@@ -293,7 +373,7 @@
         /// </summary>
         public bool DidLoadExtension(string extensionId)
         {
-            fixed(char* extensionId_str = extensionId)
+            fixed (char* extensionId_str = extensionId)
             {
                 var n_extensionId = new cef_string_t(extensionId_str, extensionId != null ? extensionId.Length : 0);
                 return cef_request_context_t.did_load_extension(GetSelf(), &n_extensionId) != 0;
@@ -365,112 +445,5 @@
             var nResult = cef_request_context_t.get_media_router(GetSelf(), nCallback);
             return CefMediaRouter.FromNative(nResult);
         }
-
-        /// <summary>
-        /// Returns the current value for |content_type| that applies for the
-        /// specified URLs. If both URLs are NULL the default value will be returned.
-        /// Returns nullptr if no value is configured. Must be called on the browser
-        /// process UI thread.
-        /// </summary>
-        public CefValue GetWebsiteSettings(
-            string requestingUrl,
-            string topLevelUrl,
-            CefContentSettingType contentType)
-        {
-            fixed (char* requestingUrl_str = requestingUrl)
-            fixed (char* topLevelUrl_str = topLevelUrl)
-            {
-                var n_requestingUrl = new cef_string_t(requestingUrl_str, requestingUrl != null ? requestingUrl.Length : 0);
-                var n_topLevelUrl = new cef_string_t(topLevelUrl_str, topLevelUrl != null ? topLevelUrl.Length : 0);
-
-                var n_result = cef_request_context_t.get_website_setting(GetSelf(), &n_requestingUrl, &n_topLevelUrl, contentType);
-
-                return CefValue.FromNativeOrNull(n_result);
-            }
-        }
-
-        /// <summary>
-        /// Sets the current value for |content_type| for the specified URLs in the
-        /// default scope. If both URLs are NULL, and the context is not incognito,
-        /// the default value will be set. Pass nullptr for |value| to remove the
-        /// default value for this content type.
-        ///
-        /// WARNING: Incorrect usage of this function may cause instability or
-        /// security issues in Chromium. Make sure that you first understand the
-        /// potential impact of any changes to |content_type| by reviewing the related
-        /// source code in Chromium. For example, if you plan to modify
-        /// CEF_CONTENT_SETTING_TYPE_POPUPS, first review and understand the usage of
-        /// ContentSettingsType::POPUPS in Chromium:
-        /// https://source.chromium.org/search?q=ContentSettingsType::POPUPS
-        /// </summary>
-        public void SetWebsiteSettings(
-                 string requestingUrl,
-                string topLevelUrl, 
-                CefContentSettingType contentType, 
-                CefValue value)
-        {
-            fixed (char* requestingUrl_str = requestingUrl)
-            fixed (char* topLevelUrl_str = topLevelUrl)
-            {
-                var n_requestingUrl = new cef_string_t(requestingUrl_str, requestingUrl != null ? requestingUrl.Length : 0);
-                var n_topLevelUrl = new cef_string_t(topLevelUrl_str, topLevelUrl != null ? topLevelUrl.Length : 0);
-                var n_value = value.ToNative();
-
-                cef_request_context_t.set_website_setting(GetSelf(), &n_requestingUrl, &n_topLevelUrl, contentType, n_value);
-            }
-        }
-
-        /// <summary>
-        /// Returns the current value for |content_type| that applies for the
-        /// specified URLs. If both URLs are NULL the default value will be returned.
-        /// Returns nullptr if no value is configured. Must be called on the browser
-        /// process UI thread.
-        /// </summary>
-        public CefContentSettingValue GetContentSetting(
-            string requestingUrl,
-            string topLevelUrl,
-            CefContentSettingType contentType)
-        {
-            fixed (char* requestingUrl_str = requestingUrl)
-            fixed (char* topLevelUrl_str = topLevelUrl)
-            {
-                var n_requestingUrl = new cef_string_t(requestingUrl_str, requestingUrl != null ? requestingUrl.Length : 0);
-                var n_topLevelUrl = new cef_string_t(topLevelUrl_str, topLevelUrl != null ? topLevelUrl.Length : 0);
-
-                return cef_request_context_t.get_content_setting(GetSelf(), &n_requestingUrl, &n_topLevelUrl, contentType);
-            }
-        }
-
-        /// <summary>
-        /// Sets the current value for |content_type| for the specified URLs in the
-        /// default scope. If both URLs are NULL, and the context is not incognito,
-        /// the default value will be set. Pass CEF_CONTENT_SETTING_VALUE_DEFAULT for
-        /// |value| to use the default value for this content type.
-        ///
-        /// WARNING: Incorrect usage of this function may cause instability or
-        /// security issues in Chromium. Make sure that you first understand the
-        /// potential impact of any changes to |content_type| by reviewing the related
-        /// source code in Chromium. For example, if you plan to modify
-        /// CEF_CONTENT_SETTING_TYPE_POPUPS, first review and understand the usage of
-        /// ContentSettingsType::POPUPS in Chromium:
-        /// https://source.chromium.org/search?q=ContentSettingsType::POPUPS
-        /// </summary>
-        public void setContentSetting(
-                string requestingUrl,
-                string topLevelUrl,
-                CefContentSettingType contentType,
-                CefContentSettingValue value)
-        {
-            fixed (char* requestingUrl_str = requestingUrl)
-            fixed (char* topLevelUrl_str = topLevelUrl)
-            {
-                var n_requestingUrl = new cef_string_t(requestingUrl_str, requestingUrl != null ? requestingUrl.Length : 0);
-                var n_topLevelUrl = new cef_string_t(topLevelUrl_str, topLevelUrl != null ? topLevelUrl.Length : 0);
-
-                cef_request_context_t.set_content_setting(GetSelf(), &n_requestingUrl, &n_topLevelUrl, contentType, value);
-            }
-        }
-
-
     }
 }
