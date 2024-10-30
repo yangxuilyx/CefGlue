@@ -41,7 +41,6 @@
             {
                 OnPrintSettings(mBrowser, m_settings, get_defaults != 0);
             }
-                
         }
 
         /// <summary>

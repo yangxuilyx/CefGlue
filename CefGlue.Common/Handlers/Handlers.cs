@@ -126,11 +126,6 @@
         {
             OnAfterCreated(browser);
         }
-
-        internal void HandleBeforeDevToolsPopup(CefBrowser browser, CefWindowInfo windowInfo, ref CefClient client, CefBrowserSettings settings, ref CefDictionaryValue extraInfo, ref bool useDefaultWindow)
-        {
-            OnBeforeDevToolsPopup(browser, windowInfo, ref client, settings, ref extraInfo, ref useDefaultWindow);
-        }
     }
 
     public abstract class RenderHandler : CefRenderHandler

@@ -194,7 +194,8 @@
         }
 
         /// <summary>
-        /// Add a switch to the end of the command line.
+        /// Add a switch to the end of the command line. If the switch has no value
+        /// pass an empty value string.
         /// </summary>
         public void AppendSwitch(string name)
         {
@@ -215,7 +216,6 @@
 
         /// <summary>
         /// Add a switch with the specified value to the end of the command line.
-        /// If the switch has no value pass an empty value string.
         /// </summary>
         public void AppendSwitch(string name, string value)
         {

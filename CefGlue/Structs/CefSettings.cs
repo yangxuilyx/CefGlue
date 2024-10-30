@@ -121,17 +121,17 @@
         /// </summary>
         public string RootCachePath { get; set; }
 
-        ///// <summary>
-        ///// The location where user data such as the Widevine CDM module and spell
-        ///// checking dictionary files will be stored on disk. If this value is empty
-        ///// then the default platform-specific user data directory will be used
-        ///// ("~/.config/cef_user_data" directory on Linux, "~/Library/Application
-        ///// Support/CEF/User Data" directory on MacOS, "AppData\Local\CEF\User Data"
-        ///// directory under the user profile directory on Windows). If this value is
-        ///// non-empty then it must be an absolute path. When using the Chrome runtime
-        ///// this value will be ignored in favor of the |root_cache_path| value.
-        ///// </summary>
-        //public string UserDataPath { get; set; }
+        /// <summary>
+        /// The location where user data such as the Widevine CDM module and spell
+        /// checking dictionary files will be stored on disk. If this value is empty
+        /// then the default platform-specific user data directory will be used
+        /// ("~/.config/cef_user_data" directory on Linux, "~/Library/Application
+        /// Support/CEF/User Data" directory on MacOS, "AppData\Local\CEF\User Data"
+        /// directory under the user profile directory on Windows). If this value is
+        /// non-empty then it must be an absolute path. When using the Chrome runtime
+        /// this value will be ignored in favor of the |root_cache_path| value.
+        /// </summary>
+        public string UserDataPath { get; set; }
 
         /// <summary>
         /// To persist session cookies (cookies without an expiry date or validity
@@ -279,40 +279,16 @@
         /// Comma delimited list of schemes supported by the associated
         /// CefCookieManager. If |cookieable_schemes_exclude_defaults| is false (0)
         /// the default schemes ("http", "https", "ws" and "wss") will also be
-        /// supported. Not specifying a |cookieable_schemes_list| value and setting
+        /// supported. Specifying a |cookieable_schemes_list| value and setting
         /// |cookieable_schemes_exclude_defaults| to true (1) will disable all loading
-        /// and saving of cookies. These settings will only impact the global
-        /// CefRequestContext. Individual CefRequestContext instances can be
-        /// configured via the CefRequestContextSettings.cookieable_schemes_list and
+        /// and saving of cookies for this manager. Can be overridden
+        /// for individual CefRequestContext instances via the
+        /// CefRequestContextSettings.cookieable_schemes_list and
         /// CefRequestContextSettings.cookieable_schemes_exclude_defaults values.
         /// </summary>
         public string CookieableSchemesList { get; set; }
 
         public bool CookieableSchemesExcludeDefaults { get; set; }
-
-        /// <summary>
-        /// Specify an ID to enable Chrome policy management via Platform and OS-user
-        /// policies. On Windows, this is a registry key like
-        /// "SOFTWARE\\Policies\\Google\\Chrome". On MacOS, this is a bundle ID like
-        /// "com.google.Chrome". On Linux, this is an absolute directory path like
-        /// "/etc/opt/chrome/policies". Only supported with the Chrome runtime. See
-        /// https://support.google.com/chrome/a/answer/9037717 for details.
-        ///
-        /// Chrome Browser Cloud Management integration, when enabled via the
-        /// "enable-chrome-browser-cloud-management" command-line flag, will also use
-        /// the specified ID. See https://support.google.com/chrome/a/answer/9116814
-        /// for details.
-        /// </summary>
-        public string ChromePolicyId { get; set; }
-
-        /// <summary>
-        /// Specify an ID for an ICON resource that can be loaded from the main
-        /// executable and used when creating default Chrome windows such as DevTools
-        /// and Task Manager. If unspecified the default Chromium ICON (IDR_MAINFRAME
-        /// [101]) will be loaded from libcef.dll. Only supported with the Chrome
-        /// runtime on Windows.
-        /// </summary>
-        public int ChromeAppIconId { get; set; }
 
         internal cef_settings_t* ToNative()
         {
@@ -328,6 +304,7 @@
             ptr->command_line_args_disabled = CommandLineArgsDisabled ? 1 : 0;
             cef_string_t.Copy(CachePath, &ptr->cache_path);
             cef_string_t.Copy(RootCachePath, &ptr->root_cache_path);
+            cef_string_t.Copy(UserDataPath, &ptr->user_data_path);
             ptr->persist_session_cookies = PersistSessionCookies ? 1 : 0;
             ptr->persist_user_preferences = PersistUserPreferences ? 1 : 0;
             cef_string_t.Copy(UserAgent, &ptr->user_agent);
@@ -345,8 +322,6 @@
             cef_string_t.Copy(AcceptLanguageList, &ptr->accept_language_list);
             cef_string_t.Copy(CookieableSchemesList, &ptr->cookieable_schemes_list);
             ptr->cookieable_schemes_exclude_defaults = CookieableSchemesExcludeDefaults ? 1 : 0;
-            cef_string_t.Copy(ChromePolicyId, &ptr->chrome_policy_id);
-            ptr->chrome_app_icon_id = ChromeAppIconId;
             return ptr;
         }
 
@@ -357,6 +332,7 @@
             libcef.string_clear(&ptr->main_bundle_path);
             libcef.string_clear(&ptr->cache_path);
             libcef.string_clear(&ptr->root_cache_path);
+            libcef.string_clear(&ptr->user_data_path);
             libcef.string_clear(&ptr->user_agent);
             libcef.string_clear(&ptr->user_agent_product);
             libcef.string_clear(&ptr->locale);

@@ -43,6 +43,7 @@
 
             var mBrowser = CefBrowser.FromNative(browser);
             var mFrame = CefFrame.FromNative(frame);
+
             using (var mParameters = CefContextMenuParams.FromNative(@params))
             using (var mModel = CefMenuModel.FromNative(model))
             {

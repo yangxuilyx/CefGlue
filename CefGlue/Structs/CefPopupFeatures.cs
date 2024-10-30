@@ -55,15 +55,39 @@
             }
         }
 
-        /// <summary>
-        /// True (1) if browser interface elements should be hidden.
-        /// </summary>
-        public bool IsPopup
+        public bool MenuBarVisible
         {
             get
             {
                 ThrowIfObjectDisposed();
-                return _self->isPopup != 0;
+                return _self->menuBarVisible != 0;
+            }
+        }
+
+        public bool StatusBarVisible
+        {
+            get
+            {
+                ThrowIfObjectDisposed();
+                return _self->statusBarVisible != 0;
+            }
+        }
+
+        public bool ToolBarVisible
+        {
+            get
+            {
+                ThrowIfObjectDisposed();
+                return _self->toolBarVisible != 0;
+            }
+        }
+
+        public bool ScrollbarsVisible
+        {
+            get
+            {
+                ThrowIfObjectDisposed();
+                return _self->scrollbarsVisible != 0;
             }
         }
 

@@ -18,6 +18,9 @@ namespace Xilium.CefGlue.Interop
         public int height;
         public int heightSet;
 
-        public int isPopup;
+        public int menuBarVisible;
+        public int statusBarVisible;
+        public int toolBarVisible;
+        public int scrollbarsVisible;
     }
 }
