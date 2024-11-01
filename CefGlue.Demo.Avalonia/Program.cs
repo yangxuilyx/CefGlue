@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Avalonia;
 using Xilium.CefGlue.Common;
@@ -29,6 +30,10 @@ namespace Xilium.CefGlue.Demo.Avalonia
                           WindowlessRenderingEnabled = false
 #endif
                       },
+                          flags: [new KeyValuePair<string, string>("enable-print-preview", "1"),
+                          new KeyValuePair<string, string>("allow-running-insecure-content","1"),
+                          new KeyValuePair<string, string>("disable-web-security","1"),
+                          ],
                       customSchemes: new[] {
                         new CustomScheme()
                         {
