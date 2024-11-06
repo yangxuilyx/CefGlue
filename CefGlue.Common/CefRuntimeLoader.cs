@@ -90,6 +90,7 @@ namespace Xilium.CefGlue.Common
 
         private static IEnumerable<string> GetSubProcessPaths(string baseDirectory)
         {
+            yield return Path.Combine(baseDirectory, "runtimes/win-x64/native", BrowserProcessFileName);
             yield return Path.Combine(baseDirectory, DefaultBrowserProcessDirectory, BrowserProcessFileName);
             yield return Path.Combine(baseDirectory, BrowserProcessFileName);
 
