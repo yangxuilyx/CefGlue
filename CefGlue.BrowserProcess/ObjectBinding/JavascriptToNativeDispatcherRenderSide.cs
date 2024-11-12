@@ -15,7 +15,7 @@ namespace Xilium.CefGlue.BrowserProcess.ObjectBinding
         private readonly Dictionary<string, ObjectRegistrationInfo> _registeredObjects = new Dictionary<string, ObjectRegistrationInfo>();
         private readonly ConcurrentDictionary<int, PromiseHolder> _pendingCalls = new ConcurrentDictionary<int, PromiseHolder>();
         private readonly ConcurrentDictionary<string, TaskCompletionSource<bool>> _pendingBoundQueryTasks = new ConcurrentDictionary<string, TaskCompletionSource<bool>>();
-        
+
         public JavascriptToNativeDispatcherRenderSide(MessageDispatcher dispatcher)
         {
             dispatcher.RegisterMessageHandler(Messages.NativeObjectRegistrationRequest.Name, HandleNativeObjectRegistration);
@@ -126,13 +126,10 @@ namespace Xilium.CefGlue.BrowserProcess.ObjectBinding
         }
 
         public void HandleContextCreated(CefV8Context context, bool isMain)
-        { 
-            if (isMain)
+        {
+            lock (_registrationSyncRoot)
             {
-                lock (_registrationSyncRoot)
-                {
-                    CreateNativeObjects(_registeredObjects.Values, context);
-                }
+                CreateNativeObjects(_registeredObjects.Values, context);
             }
         }
 
@@ -175,7 +172,7 @@ namespace Xilium.CefGlue.BrowserProcess.ObjectBinding
                     foreach (var objectInfo in objectInfos)
                     {
                         var handler = new V8FunctionHandler(objectInfo.Name, HandleNativeObjectCall);
-                        
+
                         var v8Obj = CefV8Value.CreateObject();
                         foreach (var methodName in objectInfo.MethodsNames)
                         {
