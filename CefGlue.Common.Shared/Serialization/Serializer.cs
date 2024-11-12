@@ -22,6 +22,7 @@ namespace Xilium.CefGlue.Common.Shared.Serialization
             IncludeFields = true,
             MaxDepth = SerializerMaxDepth,
             ReferenceHandler = ReferenceHandler.Preserve,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
         internal static string Serialize(object value)
