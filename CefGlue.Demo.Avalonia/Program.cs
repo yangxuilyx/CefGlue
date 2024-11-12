@@ -33,6 +33,7 @@ namespace Xilium.CefGlue.Demo.Avalonia
                           flags: [new KeyValuePair<string, string>("enable-print-preview", "1"),
                           new KeyValuePair<string, string>("allow-running-insecure-content","1"),
                           new KeyValuePair<string, string>("disable-web-security","1"),
+                          //new KeyValuePair<string, string>("single-process","1"),
                           ],
                       customSchemes: new[] {
                         new CustomScheme()

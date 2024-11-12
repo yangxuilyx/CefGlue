@@ -25,7 +25,7 @@ namespace Xilium.CefGlue.Demo.Avalonia
             var browserWrapper = this.FindControl<Decorator>("browserWrapper");
 
             browser = new AvaloniaCefBrowser();
-            browser.Address = "https://dev-his.ysmhis.com/his-system-api/middle-web/emr/home";
+            browser.Address = "http://localhost:4201/his-system-api/basemodule";
             browser.RegisterJavascriptObject(new BindingTestClass(), "boundBeforeLoadObject");
             browser.LoadStart += OnBrowserLoadStart;
             browser.TitleChanged += OnBrowserTitleChanged;
