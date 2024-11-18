@@ -88,7 +88,7 @@ namespace Xilium.CefGlue.Common.Shared.Serialization
             {
                 state.Push(item);
             }
-         
+
             do
             {
                 var currentState = state.Peek();
@@ -113,7 +113,7 @@ namespace Xilium.CefGlue.Common.Shared.Serialization
                         break;
 
                     case JsonTokenType.PropertyName:
-                        currentState.SetCurrentPropertyName(reader.GetString());
+                        currentState.SetCurrentPropertyName(CapitalizeFirstLetter(reader.GetString()));
                         break;
 
                     case JsonTokenType.StartArray:
@@ -150,6 +150,8 @@ namespace Xilium.CefGlue.Common.Shared.Serialization
                 throw new InvalidOperationException("Invalid json format: missing enclosing EndArray or EndObject token(s).");
             }
         }
+
+        private static string CapitalizeFirstLetter(string input) { if (string.IsNullOrEmpty(input)) return input; return char.ToUpper(input[0]) + input.Substring(1); }
 
         private static object ReadComplexObject(ref Utf8JsonReader reader, Stack<IDeserializerState> state, IDictionary<string, object> referencesMap)
         {
@@ -205,7 +207,7 @@ namespace Xilium.CefGlue.Common.Shared.Serialization
                     default:
                         newState = CreateNewDeserializerState(reader, state.Peek());
                         break;
-                        
+
                 }
             }
 
