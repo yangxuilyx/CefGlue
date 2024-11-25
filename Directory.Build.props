@@ -6,13 +6,13 @@
         <CefRedistVersion>108.4.13</CefRedistVersion>
         <CefRedistOSXVersion>120.1.8</CefRedistOSXVersion>
         <CefRedistLinuxVersion>108.4.13</CefRedistLinuxVersion>
-        <Platforms>x64;ARM64</Platforms>
+        <Platforms>x64;ARM64;AnyCPU</Platforms>
         <Configurations>Debug;DebugWindowlessRender;Release;ReleaseWPFAvalonia</Configurations>
     </PropertyGroup>
 
     <PropertyGroup>
         <PackageOutputPath>$(MSBuildProjectDirectory)\..\Nuget\output</PackageOutputPath>
-        <Version>108.4.13.26</Version>
+        <Version>108.4.13.31</Version>
         <Authors>XiliumHQ,OutSystems</Authors>
         <Product>CefGlue</Product>
         <AssemblyTitle>CefGlue</AssemblyTitle>
@@ -31,7 +31,7 @@
         <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Platform)' == '' or '$(Platform)' == 'x64'">
+    <PropertyGroup Condition="'$(Platform)' == '' or '$(Platform)' == 'AnyCpu' or '$(Platform)' == 'x64'">
         <ArchitectureConfig>x64</ArchitectureConfig>
         <PackageSuffix />
     </PropertyGroup>

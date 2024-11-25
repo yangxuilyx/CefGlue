@@ -44,11 +44,16 @@
     </ItemGroup>
 
     <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+        <Message Importance="high" Text="CopyFileFrom ..\CefGlue.BrowserProcess\bin\$(Platform)\$(Configuration)\$(DotnetVersion)"></Message>
         <ItemGroup>
             <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
 
             <TfmSpecificPackageFile Include="..\CefGlue.BrowserProcess\bin\$(Platform)\$(Configuration)\$(DotnetVersion)\win-$(ArchitectureConfig)\Xilium.CefGlue.BrowserProcess.*">
                 <PackagePath>runtimes\win-$(ArchitectureConfig)\native</PackagePath>
+            </TfmSpecificPackageFile>    
+            
+            <TfmSpecificPackageFile Include="..\CefGlue.BrowserProcess\bin\$(Platform)\$(Configuration)\$(DotnetVersion)\win-x86\Xilium.CefGlue.BrowserProcess.*"  Condition="'$(Platform)' == 'AnyCpu'">
+                <PackagePath>runtimes\win-x86\native</PackagePath>
             </TfmSpecificPackageFile>
 
             <TfmSpecificPackageFile Include="..\CefGlue.BrowserProcess\bin\$(Platform)\$(Configuration)\$(DotnetVersion)\linux-$(ArchitectureConfig)\Xilium.CefGlue.BrowserProcess.*">
