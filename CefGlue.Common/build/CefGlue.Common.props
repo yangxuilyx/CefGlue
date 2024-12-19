@@ -31,12 +31,12 @@
 
     <!-- copy lib to run BrowserProcess -->
     <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
-        <None Include="$(MSBuildThisFileDirectory)..\lib\net8.0\Xilium.CefGlue.dll">
+        <None Include="$(MSBuildThisFileDirectory)..\lib\net6.0\Xilium.CefGlue.dll">
             <Link>$(CefGlueBrowserProcessRuntimeDirectory)\%(RecursiveDir)%(FileName)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>false</Visible>
         </None>
-        <None Include="$(MSBuildThisFileDirectory)..\lib\net8.0\Xilium.CefGlue.Common.Shared.dll">
+        <None Include="$(MSBuildThisFileDirectory)..\lib\net6.0\Xilium.CefGlue.Common.Shared.dll">
             <Link>$(CefGlueBrowserProcessRuntimeDirectory)%(RecursiveDir)%(FileName)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>false</Visible>

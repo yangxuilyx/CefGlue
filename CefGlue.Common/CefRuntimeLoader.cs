@@ -89,13 +89,29 @@ namespace Xilium.CefGlue.Common
 
         private static IEnumerable<string> GetSubProcessPaths(string baseDirectory)
         {
-            yield return Path.Combine(baseDirectory, $"runtimes/{RuntimeInformation.RuntimeIdentifier}/native", BrowserProcessFileName);
+            var runtimeIdentifier = GetCompatibilityRuntimeIdentifier();
+            yield return Path.Combine(baseDirectory, $"runtimes/{runtimeIdentifier}/native", BrowserProcessFileName);
             yield return Path.Combine(baseDirectory, BrowserProcessFileName);
 
             // The executing DLL might not be in the current domain directory (plugins scenario)
             baseDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            yield return Path.Combine(baseDirectory, $"runtimes/{RuntimeInformation.RuntimeIdentifier}/native", BrowserProcessFileName);
+            yield return Path.Combine(baseDirectory, $"runtimes/{runtimeIdentifier}/native", BrowserProcessFileName);
             yield return Path.Combine(baseDirectory, BrowserProcessFileName);
+        }
+
+        private static string GetCompatibilityRuntimeIdentifier()
+        {
+            var runtimeIdentifier = RuntimeInformation.RuntimeIdentifier;
+            if (runtimeIdentifier.Contains("win10"))
+            {
+                var identifierSplit = runtimeIdentifier.Split('-');
+                if (identifierSplit.Length == 2)
+                {
+                    runtimeIdentifier = "win-" + identifierSplit[1];
+                }
+            }
+
+            return runtimeIdentifier;
         }
 
         internal static void Load(BrowserProcessHandler browserProcessHandler = null)

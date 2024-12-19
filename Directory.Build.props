@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
     <PropertyGroup>
-        <DotnetVersion>net8.0</DotnetVersion>
+        <DotnetVersion>net6.0</DotnetVersion>
         <LangVersion>latest</LangVersion>
         <CefRedistVersion>108.4.13</CefRedistVersion>
         <CefRedistOSXVersion>120.1.8</CefRedistOSXVersion>
@@ -12,7 +12,7 @@
 
     <PropertyGroup>
         <PackageOutputPath>$(MSBuildProjectDirectory)\..\Nuget\output</PackageOutputPath>
-        <Version>108.4.13.26</Version>
+        <Version>108.4.13.38</Version>
         <Authors>XiliumHQ,OutSystems</Authors>
         <Product>CefGlue</Product>
         <AssemblyTitle>CefGlue</AssemblyTitle>

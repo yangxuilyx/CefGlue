@@ -30,6 +30,10 @@
         <PackageReference Include="System.Runtime.Loader" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Properties\PublishProfiles\" />
+    </ItemGroup>
+
     <Target Name="Editbin" AfterTargets="Compile" Condition="$(IsEditbinEnabled) == True And $(VcvarsFile) != '' And $([MSBuild]::IsOSPlatform('Windows'))">
         <!--
       Quick explanation: This target runs after compile, and currently 3 more times for each MSBuild command executed in the next target "PublishApp".
