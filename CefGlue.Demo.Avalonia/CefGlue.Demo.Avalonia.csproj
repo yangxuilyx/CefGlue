@@ -6,7 +6,6 @@
         <TargetFramework>$(DotnetVersion)</TargetFramework>
         <AssemblyName>Xilium.CefGlue.Demo.Avalonia</AssemblyName>
         <RootNamespace>Xilium.CefGlue.Demo.Avalonia</RootNamespace>
-        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <RollForward>Major</RollForward>
         <ApplicationManifest>app.manifest</ApplicationManifest>
     </PropertyGroup>
