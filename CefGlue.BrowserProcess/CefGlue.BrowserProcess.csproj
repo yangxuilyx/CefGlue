@@ -8,7 +8,7 @@
         <RuntimeIdentifiers>osx-x64;osx-arm64;win-x64;win-arm64;linux-x64;linux-arm64</RuntimeIdentifiers>
         <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <PublishCommonConfig>Configuration=$(Configuration);Platform=$(Platform);TargetFramework=$(TargetFramework);IsPublishing=True;RuntimeIdentifier=</PublishCommonConfig>
+        <PublishCommonConfig>Configuration=$(Configuration);Platform=$(Platform);TargetFramework=$(TargetFramework);IsPublishing=True;SelfContained=false;RuntimeIdentifier=</PublishCommonConfig>
         <IsEditbinEnabled>True</IsEditbinEnabled>
         <RollForward>Major</RollForward>
     </PropertyGroup>
