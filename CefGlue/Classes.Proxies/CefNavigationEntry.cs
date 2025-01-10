@@ -92,7 +92,7 @@
         /// navigation may be completed more than once if the page is reloaded. May be
         /// 0 if the navigation has not yet completed.
         /// </summary>
-        public CefBaseTime CompletionTime
+        public CefTime CompletionTime
         {
             get
             {

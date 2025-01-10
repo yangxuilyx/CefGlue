@@ -94,7 +94,7 @@ namespace Xilium.CefGlue.Interop
         #if !DEBUG
         [SuppressUnmanagedCodeSecurity]
         #endif
-        private delegate CefBaseTime get_file_last_modified_delegate(cef_zip_reader_t* self);
+        private delegate CefTime get_file_last_modified_delegate(cef_zip_reader_t* self);
         
         [UnmanagedFunctionPointer(libcef.CEF_CALLBACK)]
         #if !DEBUG
@@ -300,7 +300,7 @@ namespace Xilium.CefGlue.Interop
         private static IntPtr _pa;
         private static get_file_last_modified_delegate _da;
         
-        public static CefBaseTime get_file_last_modified(cef_zip_reader_t* self)
+        public static CefTime get_file_last_modified(cef_zip_reader_t* self)
         {
             get_file_last_modified_delegate d;
             var p = self->_get_file_last_modified;

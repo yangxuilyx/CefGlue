@@ -90,7 +90,7 @@
         /// <summary>
         /// Returns the last modified timestamp for the file.
         /// </summary>
-        public CefBaseTime GetFileLastModified()
+        public CefTime GetFileLastModified()
         {
             return cef_zip_reader_t.get_file_last_modified(_self);
         }

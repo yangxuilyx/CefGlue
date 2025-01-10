@@ -81,10 +81,10 @@
         /// CefV8Accessor callback, or in combination with calling Enter() and Exit()
         /// on a stored CefV8Context reference.
         /// </summary>
-        public static CefV8Value CreateDate(CefBaseTime value)
+        public static CefV8Value CreateDate(CefTime value)
         {
             return CefV8Value.FromNative(
-                cef_v8value_t.create_date(value)
+                cef_v8value_t.create_date(&value)
                 );
         }
 
@@ -326,7 +326,7 @@
         /// <summary>
         /// Return a Date value.
         /// </summary>
-        public CefBaseTime GetDateValue()
+        public CefTime GetDateValue()
         {
             return cef_v8value_t.get_date_value(_self);
         }

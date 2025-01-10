@@ -81,16 +81,5 @@
                 // FIXME: caching ?
             }
         }
-
-        /// <summary>
-        /// Returns the shared memory region.
-        /// Returns nullptr when message contains an argument list.
-        /// </summary>
-        public CefSharedMemoryRegion? GetSharedMemoryRegion()
-        {
-            return CefSharedMemoryRegion.FromNativeOrNull(
-                cef_process_message_t.get_shared_memory_region(_self)
-                );
-        }
     }
 }

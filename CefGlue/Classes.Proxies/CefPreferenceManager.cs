@@ -97,7 +97,7 @@
                 var n_value = value != null ? value.ToNative() : null;
                 cef_string_t n_error;
 
-                var n_result = cef_request_context_t.set_preference(_self, &n_name, n_value, &n_error);
+                var n_result = cef_preference_manager_t.set_preference(_self, &n_name, n_value, &n_error);
 
                 error = cef_string_t.ToString(&n_error);
                 return n_result != 0;

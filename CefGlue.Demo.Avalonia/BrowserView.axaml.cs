@@ -25,7 +25,7 @@ namespace Xilium.CefGlue.Demo.Avalonia
             var browserWrapper = this.FindControl<Decorator>("browserWrapper");
 
             browser = new AvaloniaCefBrowser();
-            browser.Address = "http://localhost:4201/his-system-api/basemodule";
+            browser.Address = "https://www.bing.com";
             browser.RegisterJavascriptObject(new BindingTestClass(), "boundBeforeLoadObject");
             browser.LoadStart += OnBrowserLoadStart;
             browser.TitleChanged += OnBrowserTitleChanged;

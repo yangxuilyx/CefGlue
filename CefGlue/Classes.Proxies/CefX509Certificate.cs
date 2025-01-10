@@ -47,7 +47,7 @@
         /// Returns the date before which the X.509 certificate is invalid.
         /// CefBaseTime.GetTimeT() will return 0 if no date was specified.
         /// </summary>
-        public CefBaseTime GetValidStart()
+        public CefTime GetValidStart()
         {
             return cef_x509certificate_t.get_valid_start(_self);
         }
@@ -56,7 +56,7 @@
         /// Returns the date after which the X.509 certificate is invalid.
         /// CefBaseTime.GetTimeT() will return 0 if no date was specified.
         /// </summary>
-        public CefBaseTime GetValidExpiry()
+        public CefTime GetValidExpiry()
         {
             return cef_x509certificate_t.get_valid_expiry(_self);
         }

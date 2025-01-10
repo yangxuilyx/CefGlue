@@ -80,7 +80,7 @@
         /// <summary>
         /// Returns the time that the download started.
         /// </summary>
-        public CefBaseTime StartTime
+        public CefTime StartTime
         {
             get
             {
@@ -91,7 +91,7 @@
         /// <summary>
         /// Returns the time that the download ended.
         /// </summary>
-        public CefBaseTime EndTime
+        public CefTime EndTime
         {
             get
             {

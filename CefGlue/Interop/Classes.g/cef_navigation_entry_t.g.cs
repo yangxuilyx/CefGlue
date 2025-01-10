@@ -94,7 +94,7 @@ namespace Xilium.CefGlue.Interop
         #if !DEBUG
         [SuppressUnmanagedCodeSecurity]
         #endif
-        private delegate CefBaseTime get_completion_time_delegate(cef_navigation_entry_t* self);
+        private delegate CefTime get_completion_time_delegate(cef_navigation_entry_t* self);
         
         [UnmanagedFunctionPointer(libcef.CEF_CALLBACK)]
         #if !DEBUG
@@ -299,7 +299,7 @@ namespace Xilium.CefGlue.Interop
         private static IntPtr _pb;
         private static get_completion_time_delegate _db;
         
-        public static CefBaseTime get_completion_time(cef_navigation_entry_t* self)
+        public static CefTime get_completion_time(cef_navigation_entry_t* self)
         {
             get_completion_time_delegate d;
             var p = self->_get_completion_time;
