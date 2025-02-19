@@ -101,17 +101,17 @@ namespace Xilium.CefGlue.Common
 
         private static string GetCompatibilityRuntimeIdentifier()
         {
-            var runtimeIdentifier = RuntimeInformation.RuntimeIdentifier;
-            if (runtimeIdentifier.Contains("win10"))
+            switch (CefRuntime.Platform)
             {
-                var identifierSplit = runtimeIdentifier.Split('-');
-                if (identifierSplit.Length == 2)
-                {
-                    runtimeIdentifier = "win-" + identifierSplit[1];
-                }
+                case CefRuntimePlatform.Windows:
+                    return "win-" + RuntimeInformation.OSArchitecture.ToString().ToLower();
+                case CefRuntimePlatform.Linux:
+                    return "linux-" + RuntimeInformation.OSArchitecture.ToString().ToLower();
+                case CefRuntimePlatform.MacOS:
+                    return "osx";
+                default:
+                    throw new NotSupportedException("Platform is not supported.");
             }
-
-            return runtimeIdentifier;
         }
 
         internal static void Load(BrowserProcessHandler browserProcessHandler = null)
