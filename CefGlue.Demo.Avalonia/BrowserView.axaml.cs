@@ -22,16 +22,33 @@ namespace Xilium.CefGlue.Demo.Avalonia
         {
             InitializeComponent();
 
-            var browserWrapper = this.FindControl<Decorator>("browserWrapper");
+            //var browserWrapper = this.FindControl<Decorator>("browserWrapper");
 
-            browser = new AvaloniaCefBrowser();
-            browser.Address = "https://www.bing.com";
-            browser.RegisterJavascriptObject(new BindingTestClass(), "boundBeforeLoadObject");
-            browser.LoadStart += OnBrowserLoadStart;
-            browser.TitleChanged += OnBrowserTitleChanged;
-            browser.LifeSpanHandler = new BrowserLifeSpanHandler();
-            browser.GotFocus += Browser_GotFocus;
-            browserWrapper.Child = browser;
+            //browser = new AvaloniaCefBrowser();
+            //browser.Address = "https://www.bing.com";
+            //browser.RegisterJavascriptObject(new BindingTestClass(), "boundBeforeLoadObject");
+            //browser.LoadStart += OnBrowserLoadStart;
+            //browser.TitleChanged += OnBrowserTitleChanged;
+            //browser.LifeSpanHandler = new BrowserLifeSpanHandler();
+            //browser.GotFocus += Browser_GotFocus;
+            //browserWrapper.Child = browser;
+
+            //browserWrapper.GotFocus += BrowserWrapper_GotFocus;
+
+            Browser.Address = "https://www.bing.com";
+            Browser.Focusable = true;
+            Browser.FocusHandler = new AvaloniaHandle(Browser);
+        }
+
+        private void BrowserWrapper_GotFocus(object sender, GotFocusEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        protected override void OnGotFocus(GotFocusEventArgs e)
+        {
+            base.OnGotFocus(e);
         }
 
         private void Browser_GotFocus(object sender, GotFocusEventArgs e)

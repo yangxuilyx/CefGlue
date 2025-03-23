@@ -131,6 +131,8 @@ namespace Xilium.CefGlue.Avalonia.Platform
                     menu.PlacementMode = PlacementMode.AnchorAndGravity;
                     menu.PlacementRect = new Rect(x, y, 1, 1);
                     menu.Open(_control);
+
+                    _control.Focus();
                 },
                 DispatcherPriority.Input);
         }

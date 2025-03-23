@@ -1,9 +1,11 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:avalonia="clr-namespace:Xilium.CefGlue.Avalonia;assembly=Xilium.CefGlue.Avalonia"
         x:Class="Xilium.CefGlue.Demo.Avalonia.BrowserView">
 
     <DockPanel>
         <TextBox x:Name="addressTextBox" DockPanel.Dock="Top" KeyDown="OnAddressTextBoxKeyDown" />
         <Decorator x:Name="browserWrapper"/>
+        <avalonia:AvaloniaCefBrowser x:Name="Browser"></avalonia:AvaloniaCefBrowser>
     </DockPanel>
 </UserControl>
