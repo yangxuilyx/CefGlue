@@ -34,7 +34,7 @@ namespace Xilium.CefGlue.Common
             if (CefRuntimeLoader.IsOSREnabled)
             {
                 _adapter = new CommonOffscreenBrowserAdapter(this, nameof(BaseCefBrowser), CreateOffScreenControlHost(), CreatePopupHost(), _logger, cefRequestContextFactory?.Invoke());
-            } 
+            }
             else
             {
                 _adapter = new CommonBrowserAdapter(this, nameof(BaseCefBrowser), CreateControl(), _logger, cefRequestContextFactory?.Invoke());
@@ -57,7 +57,7 @@ namespace Xilium.CefGlue.Common
             _adapter?.Dispose(disposing);
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Creates the instance of the popup control that will host the browser popups.
@@ -81,7 +81,7 @@ namespace Xilium.CefGlue.Common
         /// Event fired when the browser is initialized.
         /// </summary>
         public event Action BrowserInitialized { add => _adapter.Initialized += value; remove => _adapter.Initialized -= value; }
-        
+
         /// <summary>
         /// Event fired when the browser starts loading a frame.
         /// </summary>
@@ -141,7 +141,7 @@ namespace Xilium.CefGlue.Common
         /// Event fired when an internal browser exception is unhandled.
         /// </summary>
         public event AsyncUnhandledExceptionEventHandler UnhandledException { add => _adapter.UnhandledException += value; remove => _adapter.UnhandledException -= value; }
-        
+
         /// <summary>
         /// Return the handler for context menus. If no handler is provided the default implementation will be used.
         /// </summary>
@@ -377,6 +377,19 @@ namespace Xilium.CefGlue.Common
         public bool IsJavascriptObjectRegistered(string name)
         {
             return _adapter.IsJavascriptObjectRegistered(name);
+        }
+
+        public void LoadFromHtml(string html)
+        {
+            var encodedHtml = "data:text/html;charset=utf-8," + Uri.EscapeDataString(html);
+            Address = encodedHtml;
+        }
+
+        public void PrintToPdf(string path,
+            CefPdfPrintSettings settings,
+            CefPdfPrintCallback callback)
+        {
+            _adapter.Browser.GetHost().PrintToPdf("", settings, callback);
         }
 
         /// <summary>
